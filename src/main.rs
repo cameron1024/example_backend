@@ -40,9 +40,10 @@ async fn main() -> Result<()> {
     Ok(())
 }
 
-fn make_app(state: Services) -> Router<Services> {
-    let router = Router::with_state(state);
-    routing::attach_routes(router)
+fn make_app(state: Services) -> Router<()> {
+    let router = Router::new();
+    let router = routing::attach_routes(router);
+    router.with_state(state)
 }
 
 fn addr() -> Result<SocketAddr> {

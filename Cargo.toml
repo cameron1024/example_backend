@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-axum =  {version = "0.6.0-rc.2", features = ["headers", "macros"] }
+axum =  {version = "0.6", features = ["headers", "macros"] }
 tokio = { version = "1", features = ["full"] }
 
 diesel = { version = "2", features = ["r2d2", "postgres", "chrono", "uuid"] }
@@ -32,6 +32,9 @@ color-eyre = "0.6"
 thiserror = "1"
 
 static_assertions = "1"
+
+aide = { version = "0.8", features = ["macros", "axum"] }
+schemars = "0.8"
 
 [dev-dependencies]
 axum-test-helper = "0.1"
