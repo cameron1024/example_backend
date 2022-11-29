@@ -1,15 +1,16 @@
 use diesel::{AsExpression, FromSqlRow};
 use microtype::microtype;
+use schemars::JsonSchema;
 use uuid::Uuid;
 
 microtype! {
-    #[derive(Debug, Clone, Copy, PartialEq, AsExpression, FromSqlRow)]
+    #[derive(Debug, Clone, Copy, PartialEq, AsExpression, FromSqlRow, JsonSchema)]
     #[diesel(sql_type = diesel::sql_types::Uuid)]
     pub Uuid {
         UserId
     }
 
-    #[derive(Debug, Clone, PartialEq, AsExpression, FromSqlRow)]
+    #[derive(Debug, Clone, PartialEq, AsExpression, FromSqlRow, JsonSchema)]
     #[diesel(sql_type = diesel::sql_types::Text)]
     #[string]
     pub String {
@@ -31,6 +32,16 @@ microtype! {
     }
 
 
+}
+
+impl JsonSchema for Password {
+    fn schema_name() -> String {
+        String::schema_name()
+    }
+
+    fn json_schema(gen: &mut schemars::gen::SchemaGenerator) -> schemars::schema::Schema {
+        String::json_schema(gen)
+    }
 }
 
 #[cfg(test)]

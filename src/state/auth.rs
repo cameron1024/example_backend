@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use crate::{
-    db::Db,
+    db::{sql::DbError, Db},
     model::{
         types::{Email, Password, UserId},
         user::User,
@@ -67,7 +67,13 @@ impl AuthService {
             created_at,
         };
 
-        self.db.create_user(user.clone()).await?;
+        self.db
+            .create_user(user.clone())
+            .await
+            .map_err(|e| match e {
+                DbError::AlreadyExists { .. } => ApiError::AlreadyInUse,
+                _ => ApiError::Unknown,
+            })?;
 
         let jwt = self.jwt.create_jwt(user).map_err(|_| ApiError::Auth)?;
 
@@ -82,17 +88,26 @@ impl AuthService {
     #[allow(dead_code)]
     #[instrument]
     pub async fn user_with_id(&self, user_id: UserId) -> Result<Option<User>, ApiError> {
-        Ok(self.db.user_by_id(user_id).await?)
+        self.db
+            .user_by_id(user_id)
+            .await
+            .map_err(|_| ApiError::Unknown)
     }
 
     #[instrument]
     async fn user_with_email(&self, email: Email) -> Result<Option<User>, ApiError> {
-        Ok(self.db.user_by_email(email).await?)
+        self.db
+            .user_by_email(email)
+            .await
+            .map_err(|_| ApiError::Unknown)
     }
 
     #[instrument]
     pub async fn delete_user(&self, claims: &Claims<Validated>) -> Result<(), ApiError> {
-        self.db.delete_user(claims.subject).await?;
+        self.db
+            .delete_user(claims.subject)
+            .await
+            .map_err(|_| ApiError::Unknown)?;
         Ok(())
     }
 }

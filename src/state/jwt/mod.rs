@@ -5,6 +5,7 @@ use crate::{config::Config, model::user::User};
 use self::claims::{Claims, Unvalidated, Validated};
 use jsonwebtoken::{decode, encode, Header, TokenData, Validation};
 use microtype::{secrecy::ExposeSecret, SecretMicrotype};
+use schemars::JsonSchema;
 
 use super::{random::Random, time::Time};
 
@@ -19,6 +20,16 @@ microtype::microtype! {
     #[string]
     pub String {
         Jwt,
+    }
+}
+
+impl JsonSchema for Jwt {
+    fn schema_name() -> String {
+        String::schema_name()
+    }
+
+    fn json_schema(gen: &mut schemars::gen::SchemaGenerator) -> schemars::schema::Schema {
+        String::json_schema(gen)
     }
 }
 

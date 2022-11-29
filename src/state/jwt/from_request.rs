@@ -4,7 +4,6 @@ use axum::{
     http::request::Parts,
     Extension, TypedHeader,
 };
-use color_eyre::eyre::eyre;
 use microtype::SecretMicrotype;
 
 use crate::{routing::errors::ApiError, state::Services};
@@ -30,7 +29,7 @@ where
 
         let Extension(services): Extension<Services> = Extension::from_request_parts(parts, state)
             .await
-            .map_err(|_| ApiError::Unknown(eyre!("uh oh")))?;
+            .map_err(|_| ApiError::Unknown)?;
 
         let jwt = Jwt::new(auth_header.token().to_string());
 

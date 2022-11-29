@@ -19,7 +19,6 @@ pub trait Db: UserDao + Send + Sync + Debug {
 impl Db for SqlDb {
     #[cfg(test)]
     fn as_mock(&self) -> MockDb {
-
-        unimplemented!()
+        unimplemented!("this is not a mock db");
     }
 }

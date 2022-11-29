@@ -1,3 +1,4 @@
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -5,24 +6,26 @@ use crate::{
     state::jwt::Jwt,
 };
 
-#[derive(Debug, Clone, Deserialize)]
+static_assertions::assert_impl_all!(Result<CreateUserRequest, String>: JsonSchema);
+
+#[derive(Debug, Clone, Deserialize, JsonSchema)]
 pub struct CreateUserRequest {
     pub email: Email,
     pub password: Password,
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, JsonSchema)]
 pub struct CreateUserResponse {
     pub jwt: Jwt,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, JsonSchema)]
 pub struct LoginRequest {
     pub email: Email,
     pub password: Password,
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, JsonSchema)]
 pub struct LoginResponse {
     pub jwt: Jwt,
 }

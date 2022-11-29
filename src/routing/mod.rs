@@ -1,7 +1,9 @@
-use axum::{
-    routing::{get, post},
-    Router,
-};
+use std::sync::Arc;
+
+use aide::axum::routing::{get, post};
+use aide::axum::ApiRouter;
+use aide::{axum::IntoApiResponse, openapi::OpenApi};
+use axum::{Extension, Json, Router};
 
 use crate::state::Services;
 
@@ -10,14 +12,17 @@ mod health;
 
 pub mod errors;
 
-pub fn attach_routes(router: Router<Services>) -> Router<Services> {
-    let auth = router
-        .clone()
-        .route("/create-user", post(auth::create_user))
-        .route("/login", post(auth::login))
-        .route("/delete-user", post(auth::delete_user));
+pub fn attach_routes(router: ApiRouter<Services>) -> ApiRouter<Services> {
+    aide::gen::infer_responses(false);
 
     router
-        .route("/health", get(health::health))
-        .nest("/auth", auth)
+        // .api_route("/auth/create-user", post(auth::create_user))
+        // .api_route("/auth/login", post(auth::login))
+        .api_route("/auth/delete-user", get(auth::delete_user))
+        // .api_route("/health", get(health::health))
+        // .route("/docs", get(docs))
+}
+
+async fn docs(Extension(api): Extension<Arc<OpenApi>>) -> impl IntoApiResponse {
+    Json(api)
 }

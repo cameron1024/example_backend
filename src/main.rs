@@ -11,9 +11,10 @@ mod state;
 #[cfg(test)]
 mod testing;
 
-use std::net::SocketAddr;
+use std::{net::SocketAddr, sync::Arc};
 
-use axum::{Router, Server};
+use aide::{axum::ApiRouter, openapi::OpenApi};
+use axum::{Extension, Router, Server};
 use color_eyre::Result;
 use state::{make_services, Dependencies, Services};
 
@@ -26,7 +27,7 @@ async fn main() -> Result<()> {
     color_eyre::install()?;
 
     info!("hello");
-    let addr = addr().unwrap_or_else(|_| ([127, 0, 0, 1], 8000).into());
+    let addr = addr().unwrap_or_else(|_| ([0, 0, 0, 0], 8000).into());
 
     let deps = Dependencies::load()?;
     let services = make_services(deps)?;
@@ -41,10 +42,16 @@ async fn main() -> Result<()> {
 }
 
 fn make_app(state: Services) -> Router<()> {
-    let router = Router::new();
+    let mut api = OpenApi::default();
+    let router = ApiRouter::new();
     let router = routing::attach_routes(router);
-    router.with_state(state)
+    router
+        .finish_api(&mut api)
+        .layer(Extension(Arc::new(api)))
+        .with_state(state)
 }
+
+static_assertions::assert_impl_all!(Router<()>: Clone);
 
 fn addr() -> Result<SocketAddr> {
     let s = std::env::var("BIND_ADDR")?;

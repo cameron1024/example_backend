@@ -1,0 +1,12 @@
+{
+  "hostname": "localhost",
+  "jwt": {
+    "ttl_seconds": 1000000,
+    "key": "a bad secret"
+  },
+  "db": {
+    "host": "localhost:5432",
+    "name": "example_backend",
+    "username": "postgres"
+  }
+}

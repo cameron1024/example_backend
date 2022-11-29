@@ -16,6 +16,7 @@ pub struct Config {
 }
 
 #[derive(Debug, Clone, Deserialize)]
+#[serde(untagged)]
 pub enum DbKind {
     Real(DbConfig),
     #[cfg(test)]

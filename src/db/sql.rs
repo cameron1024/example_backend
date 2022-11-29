@@ -9,6 +9,7 @@ use diesel::{
 use serde::Deserialize;
 use thiserror::Error;
 
+
 #[derive(Debug, Clone, Deserialize)]
 pub struct DbConfig {
     pub host: String,

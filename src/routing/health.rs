@@ -1,8 +1,8 @@
 use super::errors::ApiResponse;
 
 #[instrument]
-pub(super) async fn health() -> ApiResponse<&'static str> {
-    Ok("OK".into())
+pub(super) async fn health() -> String {
+    "OK".into()
 }
 
 #[cfg(test)]

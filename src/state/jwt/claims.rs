@@ -1,7 +1,9 @@
 use std::marker::PhantomData;
 
+use aide::OperationIo;
 use chrono::{DateTime, Duration, TimeZone, Utc};
 use microtype::microtype;
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use crate::model::{
@@ -17,7 +19,7 @@ pub struct Unvalidated;
 trait Untrusted {}
 impl Untrusted for Unvalidated {}
 
-#[derive(Debug, Clone, Deserialize, Serialize, PartialEq)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, JsonSchema, OperationIo)]
 #[serde(bound(deserialize = "Validity: Untrusted"))]
 pub struct Claims<Validity> {
     pub _marker: PhantomData<Validity>,
@@ -97,7 +99,7 @@ impl Claims<Unvalidated> {
 }
 
 microtype! {
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, JsonSchema)]
     #[string]
     pub String {
         Issuer,
@@ -105,7 +107,7 @@ microtype! {
         JwtID,
     }
 
-    #[derive(Debug, Clone, Copy, PartialEq)]
+    #[derive(Debug, Clone, Copy, PartialEq, JsonSchema)]
     pub i64 {
         Expiration,
         NotBefore,
@@ -127,6 +129,7 @@ macro_rules! date_time {
 date_time!(Expiration);
 date_time!(NotBefore);
 date_time!(IssuedAt);
+
 
 #[cfg(test)]
 mod tests {
